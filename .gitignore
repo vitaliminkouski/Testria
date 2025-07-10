@@ -207,4 +207,5 @@ marimo/_lsp/
 __marimo__/
 
 .idea
+.vscode
 private_settings.py
