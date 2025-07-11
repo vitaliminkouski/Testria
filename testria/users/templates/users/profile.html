@@ -2,19 +2,49 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Profile</title>
+    <style>
+        .profile-photo{
+            max-width: 200px;
+            max-height: 200px;
+            height: auto;
+            display: block;
+        }
+    </style>
 </head>
 <body>
+{% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+
 <h2>Profile</h2>
 
 <form method="post" enctype="multipart/form-data">
   {% csrf_token %}
   {% if user.photo %}
-  <p><img src="{{ user.photo.url }}"></p>
+    <p><img src="{{ user.photo.url }}" class="profile-photo"></p>
+  {% else %}
+    <p><img src="{{ default_user_image }}" class="profile-photo"></p>
   {% endif %}
   {{ form.as_p }}
   <button type="submit">Save</button>
 </form>
 <p><a href="{% url 'users:password_change' %}">Change password</a></p>
+
+{% if not user.is_verified %}
+    <p>
+        Your email address is not yet verified. Please check your inbox for a verification link.
+        If you haven't received it or the link has expired, you can request a new one:
+    </p>
+    <p><a href="{% url 'users:resend_verification' %}?next={{ request.path|urlencode }}" class="btn btn-primary">Resend Verification Email</a></p>
+{% else %}
+    <p>Your email address is verified. <span style="color: green;">&#10003;</span></p>
+{% endif %}
+
 </body>
 </html>

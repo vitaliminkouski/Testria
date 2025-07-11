@@ -32,4 +32,6 @@ urlpatterns = [
     path('password-change-done/',
          PasswordChangeDoneView.as_view(template_name='users/password_change_done.html'),
          name='password_change_done'),
+    path('verification/<uidb64>/<token>/', views.verify_email_view, name='verification'),
+    path('resend-verification/', views.resend_verification_email_view, name='resend_verification'),
 ]
