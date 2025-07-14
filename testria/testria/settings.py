@@ -27,7 +27,6 @@ SECRET_KEY = ''
 DEBUG = True
 
 ALLOWED_HOSTS = []
-IP='127.0.0.1:8000'
 
 # Application definition
 
@@ -40,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'users.apps.UsersConfig',
 ]
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -116,14 +114,13 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [
-    BASE_DIR / "static/",
+    BASE_DIR / "static",
 ]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media/'
 
-# Use a URL for the default user image, not a filesystem path
-DEFAULT_USER_IMAGE_URL = MEDIA_URL + 'users/default_user_image.png'
+DEFAULT_USER_IMAGE = MEDIA_URL + 'users/default_user_image.png'
 
 
 # Default primary key field type
@@ -147,12 +144,23 @@ EMAIL_HOST_PASSWORD = ''
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-#celery
+# Celery
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/1'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'America/Chicago'
+CELERY_TIMEZONE = 'UTC'
 
+from datetime import timedelta
+
+CELERY_BEAT_SCHEDULE = {
+    'send-daily-confirmation-email': {
+        'task': 'users.tasks.send_daily_confirmation_email',
+        'schedule': timedelta(days=1),
+
+    },
+}
+
+IP='127.0.0.1:8000'
 from .private_settings import *

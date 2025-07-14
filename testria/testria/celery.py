@@ -7,6 +7,4 @@ app=Celery('testria')
 
 app.config_from_object('django.conf:settings', namespace='CELERY')
 
-@app.task(bind=True)
-def debug_task(self):
-    print(f'Request: {self.request!r}')
+app.autodiscover_tasks()

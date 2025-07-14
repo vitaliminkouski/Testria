@@ -44,7 +44,7 @@ class UserProfileView(LoginRequiredMixin, UpdateView):
     model = get_user_model()
     form_class = UserProfileForm
     template_name = 'users/profile.html'
-    extra_context = {'default_user_image': settings.DEFAULT_USER_IMAGE_URL}
+    extra_context = {'default_user_image': settings.DEFAULT_USER_IMAGE}
 
     def get_success_url(self):
         return reverse_lazy('users:profile')

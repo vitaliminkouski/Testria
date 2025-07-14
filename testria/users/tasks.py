@@ -43,5 +43,12 @@ def send_confirmation_email_task(user_id):
     except Exception as e:
         print(f"Failed to send confirmation email to {user.email}: {e}")
 
+@shared_task
+def send_daily_confirmation_email():
+    User=get_user_model()
+    unverified_users=User.objects.filter(is_verified=False)
+    print(f"Found {unverified_users.count()} unverified users")
 
-
+    for user in unverified_users:
+        send_confirmation_email_task.delay(user.pk)
+        print(f"Verification email sent on address {user.email}")
