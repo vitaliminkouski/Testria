@@ -14,7 +14,7 @@ from testria.private_settings import EMAIL_HOST_PASSWORD
 def send_confirmation_email_task(user_id):
     try:
         user=get_user_model().objects.get(pk=user_id)
-    except user.DoesNotExist:
+    except get_user_model().DoesNotExist:
         print(f"User with id {user_id} does not exist. Verification email not sent")
         return
 
@@ -35,7 +35,7 @@ def send_confirmation_email_task(user_id):
         send_mail(
             'Confirm your email',
             plain_message,
-            EMAIL_HOST_PASSWORD,
+            settings.DEFAULT_FROM_EMAIL,
             [user.email],
             fail_silently=False,
             html_message=html_message)

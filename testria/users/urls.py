@@ -34,4 +34,10 @@ urlpatterns = [
          name='password_change_done'),
     path('verification/<uidb64>/<token>/', views.verify_email_view, name='verification'),
     path('resend-verification/', views.resend_verification_email_view, name='resend_verification'),
+    path('view-profile/<str:username>/', views.OtherUserView.as_view(), name='view_profile'),
+    path('follow/<str:username>/', views.follow_view, name='follow'),
+    path('unfollow/<str:username>/', views.unfollow_view, name='unfollow'),
+    path('followers/<str:username>/', views.ListFollowersView.as_view(), name='followers'),
+    path('following/<str:username>/', views.ListFollowingView.as_view(), name='following'),
+
 ]

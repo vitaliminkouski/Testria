@@ -5,11 +5,11 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
 from django.http import HttpResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.encoding import force_str, DjangoUnicodeDecodeError
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode, url_has_allowed_host_and_scheme
-from django.views.generic import CreateView, UpdateView
+from django.views.generic import CreateView, UpdateView, DetailView, ListView
 from django.contrib.auth.backends import ModelBackend
 
 from testria import settings
@@ -58,6 +58,49 @@ class UserPasswordChangeView(PasswordChangeView):
     template_name = 'users/password_change_form.html'
     success_url = reverse_lazy('users:password_change_done')
 
+class OtherUserView(LoginRequiredMixin, DetailView):
+    model = get_user_model()
+    template_name = 'users/other_user_profile.html'
+    context_object_name = 'user'
+    slug_field = 'username'
+    slug_url_kwarg = 'username'
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        context = self.get_context_data(object=self.object)
+        if self.request.user==self.object:
+            return redirect('users:profile')
+        return self.render_to_response(context)
+
+    def get_context_data(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        context['default_user_image']=settings.DEFAULT_USER_IMAGE
+        if self.request.user!=self.get_object():
+            context['is_following']=self.request.user.is_following(self.get_object())
+        else:
+            context['is_following']=False
+        return context
+
+@login_required
+def follow_view(request, username):
+    if request.user.username==username:
+        messages.error(request, "You can't follow on yourself")
+        return redirect('users:profile')
+    target_user = get_object_or_404(get_user_model(), username=username)
+    if request.user.is_following(target_user):
+        messages.info(request, f"You're already followed on {username}")
+    else:
+        request.user.following.add(target_user)
+        messages.success(request, f"You're started following on {username}")
+    return redirect('users:view_profile', username)
+
+@login_required
+def unfollow_view(request, username):
+    target_user=get_object_or_404(get_user_model(), username=username)
+    if request.user.is_following(target_user):
+        request.user.following.remove(target_user)
+    return redirect('users:view_profile', username)
+
 
 def verify_email_view(request, uidb64, token):
     User = get_user_model()
@@ -98,3 +141,23 @@ def resend_verification_email_view(request):
         messages.success(request, 'Your email is already verified')
 
     return redirect(next_url)
+
+class ListFollowingView(LoginRequiredMixin, DetailView):
+    model=get_user_model()
+    template_name = 'users/following_list.html'
+    slug_field = 'username'
+    slug_url_kwarg = 'username'
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['following']=self.request.user.following.all()
+        return context
+
+class ListFollowersView(LoginRequiredMixin, DetailView):
+    model=get_user_model()
+    template_name = 'users/followers_list.html'
+    slug_field = 'username'
+    slug_url_kwarg = 'username'
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['followers'] = self.request.user.followers.all()
+        return context

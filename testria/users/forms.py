@@ -32,5 +32,5 @@ class UserProfileForm(forms.ModelForm):
         fields=['photo', 'username', 'first_name', 'last_name', 'email',  'bio', ]
 
 class UserPasswordChangeForm(PasswordChangeForm):
-    new_password1 = forms.CharField(label='New password')
-    new_password2 = forms.CharField(label='Repeat new password')
+    new_password1 = forms.CharField(label='New password', widget=forms.PasswordInput())
+    new_password2 = forms.CharField(label='Repeat new password', widget=forms.PasswordInput())

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile</title>
+    <style>
+        .profile-photo{
+                max-width: 200px;
+                max-height: 200px;
+                height: auto;
+                display: block;
+            }
+    </style>
+</head>
+<body>
+<h2>{{ user.username }}</h2>
+{% if user.photo %}
+<p><img src="{{ user.photo.url }}" class="profile-photo"></p>
+{% else %}
+<p><img src="{{ default_user_image }}" class="profile-photo"></p>
+{% endif %}
+{% if is_following %}
+<p><a href="{% url 'users:unfollow' username=user.username %}">Unfollow</a></p>
+{% else %}
+<p><a href="{% url 'users:follow' username=user.username %}">Follow</a></p>
+{% endif %}
+<p>First name: {{ user.first_name }}</p>
+<p>Last name: {{ user.last_name }}</p>
+<p>Biography: {{ user.bio }}</p>
+
+
+</body>
+</html>

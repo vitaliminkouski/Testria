@@ -114,7 +114,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [
-    BASE_DIR / "static",
+    BASE_DIR / "static/",
 ]
 
 MEDIA_URL = '/media/'
@@ -158,7 +158,6 @@ CELERY_BEAT_SCHEDULE = {
     'send-daily-confirmation-email': {
         'task': 'users.tasks.send_daily_confirmation_email',
         'schedule': timedelta(days=1),
-
     },
 }
 

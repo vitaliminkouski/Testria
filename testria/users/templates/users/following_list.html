@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Following</title>
+</head>
+<body>
+<h2>Following</h2>
+<ul>
+    {% for f in following %}
+        <li><a href="{% url 'users:view_profile' username=f.username %}">{{ f.username }}</a></li>
+    {% endfor %}
+</ul>
+</body>
+</html>
