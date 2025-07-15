@@ -2,19 +2,18 @@ from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
-from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
-from django.utils.encoding import force_str, DjangoUnicodeDecodeError
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode, url_has_allowed_host_and_scheme
-from django.views.generic import CreateView, UpdateView, DetailView, ListView
-from django.contrib.auth.backends import ModelBackend
+from django.views.generic import CreateView, UpdateView, DetailView
 
 from testria import settings
 from users.forms import RegisterUserForm, LoginUserForm, UserProfileForm, UserPasswordChangeForm
-from users.tasks import send_confirmation_email_task
+
+from .custom_user_errors import *
+from .user_services import UserServices
+from .utils import SubscriptionsListMixin
 
 
 class RegisterUserView(CreateView):
@@ -83,43 +82,35 @@ class OtherUserView(LoginRequiredMixin, DetailView):
 
 @login_required
 def follow_view(request, username):
-    if request.user.username==username:
-        messages.error(request, "You can't follow on yourself")
-        return redirect('users:profile')
-    target_user = get_object_or_404(get_user_model(), username=username)
-    if request.user.is_following(target_user):
-        messages.info(request, f"You're already followed on {username}")
-    else:
-        request.user.following.add(target_user)
+    try:
+        UserServices.follow_on(request, username)
         messages.success(request, f"You're started following on {username}")
-    return redirect('users:view_profile', username)
+        return redirect('users:view_profile', username)
+    except FollowOnYourselfError as e:
+        messages.error(request, e)
+        return redirect('users:profile')
+    except AlreadyFollowedOnUserError as e:
+        messages.info(request, e)
+        return redirect('users:profile')
+
 
 @login_required
 def unfollow_view(request, username):
-    target_user=get_object_or_404(get_user_model(), username=username)
-    if request.user.is_following(target_user):
-        request.user.following.remove(target_user)
+    UserServices.unfollow_on(request, username)
     return redirect('users:view_profile', username)
 
 
 def verify_email_view(request, uidb64, token):
-    User = get_user_model()
-    try:
-        uid = force_str(urlsafe_base64_decode(uidb64))
-        user = User.objects.get(pk=uid)
-    except(TypeError, ValueError, OverflowError, User.DoesNotExist, DjangoUnicodeDecodeError):
-        user = None
 
-    if user is not None and default_token_generator.check_token(user, token):
-        user.is_verified = True
-        user.save()
+    try:
+        user=UserServices.verify_email(uidb64, token)
         messages.success(request, 'Your account has been verified successfully')
         login(request, user, backend='django.contrib.auth.backends.ModelBackend')
         return redirect('users:home')
-
-    else:
-        messages.error(request, 'The confirmation link is invalid or has expired')
+    except ConfirmationLinkError as e:
+        messages.error(request, e)
         return redirect('users:login')
+
 
 
 @login_required
@@ -134,30 +125,27 @@ def resend_verification_email_view(request):
     if not next_url:
         next_url = reverse_lazy('users:profile')
 
-    if not request.user.is_verified:
-        send_confirmation_email_task.delay(request.user.pk)
+    if UserServices.resend_verification_email(request):
         messages.info(request, 'Verification email has been sent to your email address')
     else:
         messages.success(request, 'Your email is already verified')
 
     return redirect(next_url)
 
-class ListFollowingView(LoginRequiredMixin, DetailView):
-    model=get_user_model()
+class ListFollowingView(SubscriptionsListMixin):
     template_name = 'users/following_list.html'
-    slug_field = 'username'
-    slug_url_kwarg = 'username'
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['following']=self.request.user.following.all()
+        context['following'] = self.request.user.following.all()
         return context
 
-class ListFollowersView(LoginRequiredMixin, DetailView):
-    model=get_user_model()
+class ListFollowersView(SubscriptionsListMixin):
     template_name = 'users/followers_list.html'
-    slug_field = 'username'
-    slug_url_kwarg = 'username'
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['followers'] = self.request.user.followers.all()
         return context
+
+
