@@ -1,9 +1,95 @@
 from django.contrib.auth import get_user_model
-from rest_framework import generics
+from django.core.serializers import serialize
+from django.shortcuts import redirect
+from django.urls import reverse_lazy
+from rest_framework import generics, status, views
+from rest_framework.generics import get_object_or_404
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.response import Response
 
-from users.api.serializers import UserRegisterSerializer
+from users.api.serializers import UserRegisterSerializer, UserSerializer, OtherUserSerializer, \
+    PasswordResetRequestSerializer, PasswordResetConfirmSerializer, EmailConfirmationSerializer
+from users.tasks import send_password_reset_email_task
+from users.user_services import UserServices
 
 
 class UserRegisterAPIView(generics.CreateAPIView):
     queryset = get_user_model().objects.all()
     serializer_class = UserRegisterSerializer
+
+class UserProfileAPIView(generics.RetrieveUpdateAPIView):
+    queryset = get_user_model().objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated, ]
+
+    def get_object(self):
+        return self.request.user
+
+class OtherUserProfileAPIView(generics.RetrieveAPIView):
+    queryset = get_user_model().objects.all()
+    serializer_class = OtherUserSerializer
+    lookup_field = 'username'
+    permission_classes = [IsAuthenticated, ]
+
+    def retrieve(self, request, *args, **kwargs):
+        if self.request.user.is_authenticated and \
+            self.request.user.username==self.kwargs.get('username'):
+            return redirect(reverse_lazy('api_users:api_profile'))
+        return super().retrieve(request, *args, **kwargs)
+
+class PasswordResetRequestAPIView(generics.GenericAPIView):
+    serializer_class = PasswordResetRequestSerializer
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        serializer=self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        email=serializer.validated_data['email']
+        user = get_object_or_404(get_user_model(), email=email)
+
+        send_password_reset_email_task.delay(user.pk)
+
+        return Response({"details": "Password reset email has been sent"},
+                        status=status.HTTP_200_OK)
+
+class PasswordResetConfirmAPIView(generics.GenericAPIView):
+    serializer_class = PasswordResetConfirmSerializer
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        serializer=self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        user=serializer.save()
+        return Response(
+            {"detail": "Password has been reset successfully."},
+            status=status.HTTP_200_OK
+        )
+
+class ResendVerificationEmailAPIView(views.APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        if UserServices.resend_verification_email(request):
+            return Response({"detail": "Verification email has been sent to your email address"},
+                            status=status.HTTP_200_OK)
+        else:
+            return Response({"detail": "Your email is already verified"},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+class VerifyEmailAPIView(generics.GenericAPIView):
+    serializer_class = EmailConfirmationSerializer
+    def post(self, request, *args, **kwargs):
+        serializer=self.get_serializer(data=request.data)
+        serializer.is_valid()
+        uid=serializer.validated_data['uid']
+        token=serializer.validated_data['token']
+
+        try:
+            uid = serializer.validated_data['uid']
+            token = serializer.validated_data['token']
+            UserServices.verify_email(uid, token)
+            return Response({"detail": "Your email has been verified successfully"})
+        except Exception as e:
+            return Response({"error": str(e)})

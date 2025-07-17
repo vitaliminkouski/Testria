@@ -52,3 +52,38 @@ def send_daily_confirmation_email():
     for user in unverified_users:
         send_confirmation_email_task.delay(user.pk)
         print(f"Verification email sent on address {user.email}")
+
+
+@shared_task
+def send_password_reset_email_task(user_id):
+    try:
+        user=get_user_model().objects.get(pk=user_id)
+    except get_user_model().DoesNotExist:
+        print(f"User with id {user_id} does not exist")
+        return
+
+    uid=urlsafe_base64_encode(force_bytes(user.pk))
+    token=default_token_generator.make_token(user)
+
+    protocol='http'
+    reset_url=f"{protocol}://{settings.IP}/users/api/v1/password-reset/confirm/{uid}/{token}/"
+
+    html_message=render_to_string('users/api_password_reset_email.html', context=
+    {
+        "user": user,
+        "reset_url": reset_url,
+    })
+    plain_message=strip_tags(html_message)
+    try:
+        send_mail(
+            'Password reset request',
+            plain_message,
+            settings.DEFAULT_FROM_EMAIL,
+            [user.email],
+            fail_silently=False,
+            html_message=html_message
+        )
+        print(f"Password reset email sent to {user.email}")
+    except Exception as e:
+        print(f"Failed to send password reset email to {user.email}: {e}")
+

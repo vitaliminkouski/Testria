@@ -128,7 +128,7 @@ def resend_verification_email_view(request):
     if UserServices.resend_verification_email(request):
         messages.info(request, 'Verification email has been sent to your email address')
     else:
-        messages.success(request, 'Your email is already verified')
+        messages.info(request, 'Your email is already verified')
 
     return redirect(next_url)
 
