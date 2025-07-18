@@ -8,7 +8,8 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 
 from users.api.serializers import UserRegisterSerializer, UserSerializer, OtherUserSerializer, \
-    PasswordResetRequestSerializer, PasswordResetConfirmSerializer, EmailConfirmationSerializer
+    PasswordResetRequestSerializer, PasswordResetConfirmSerializer, EmailConfirmationSerializer, \
+    PasswordChangeSerializer
 from users.tasks import send_password_reset_email_task
 from users.user_services import UserServices
 
@@ -80,11 +81,10 @@ class ResendVerificationEmailAPIView(views.APIView):
 
 class VerifyEmailAPIView(generics.GenericAPIView):
     serializer_class = EmailConfirmationSerializer
+    permission_classes = [AllowAny]
     def post(self, request, *args, **kwargs):
         serializer=self.get_serializer(data=request.data)
-        serializer.is_valid()
-        uid=serializer.validated_data['uid']
-        token=serializer.validated_data['token']
+        serializer.is_valid(raise_exception=True)
 
         try:
             uid = serializer.validated_data['uid']
@@ -93,3 +93,14 @@ class VerifyEmailAPIView(generics.GenericAPIView):
             return Response({"detail": "Your email has been verified successfully"})
         except Exception as e:
             return Response({"error": str(e)})
+
+class PasswordChangeAPIView(generics.GenericAPIView):
+    serializer_class = PasswordChangeSerializer
+    permission_classes = [IsAuthenticated]
+    def post(self, request, *args, **kwargs):
+        serializer=self.get_serializer(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response({"detail": "Password changed successfully"},
+                        status=status.HTTP_200_OK)
