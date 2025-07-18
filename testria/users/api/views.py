@@ -13,6 +13,7 @@ from users.api.serializers import UserRegisterSerializer, UserSerializer, OtherU
     PasswordChangeSerializer, SessionLoginSerializer
 from users.tasks import send_password_reset_email_task
 from users.user_services import UserServices
+from users.custom_user_errors import FollowOnYourselfError, AlreadyFollowedOnUserError
 
 
 class UserRegisterAPIView(generics.CreateAPIView):
@@ -122,7 +123,39 @@ class SessionLogoutAPIView(views.APIView):
         logout(request)
         return Response({"detail": "Logged out successfully."}, status=status.HTTP_200_OK)
 
-class GetCSRFTokenAPIView(views.APIView):
-    def get(self, request):
-        token=get_token(request)
-        return Response({"csrf_token": token})
+
+
+class FollowAPIView(views.APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request, username, *args, **kwargs):
+        try:
+            UserServices.follow_on(request, username)
+            return Response({"detail": f"You've succesfully followed on {username}"})
+        except(AlreadyFollowedOnUserError, FollowOnYourselfError) as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class UnfollowAPIView(views.APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request, username, *args, **kwargs):
+        try:
+            UserServices.unfollow_on(request, username)
+            return Response({"detail": f"You stop following on {username}"})
+        except Exception as e:
+            return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class ListFollowingAPIView(generics.ListAPIView):
+    serializer_class = OtherUserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return self.request.user.following.all()
+
+
+class ListFollowersAPIView(generics.ListAPIView):
+    serializer_class = OtherUserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return self.request.user.followers.all()

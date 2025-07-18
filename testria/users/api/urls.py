@@ -26,6 +26,8 @@ urlpatterns = [
          name='api_resend_verification_email'),
     path('verification/', views.VerifyEmailAPIView.as_view(), name='api_verify'),
 
-    path('csrf-token/', views.GetCSRFTokenAPIView.as_view(), name='api_get_csrf_token'),
-
+    path('follow/<str:username>/', views.FollowAPIView.as_view(), name='api_follow'),
+    path('unfollow/<str:username>/', views.UnfollowAPIView.as_view(), name='api_unfollow'),
+    path('following/', views.ListFollowingAPIView.as_view(), name='api_list_following'),
+    path('followers/', views.ListFollowersAPIView.as_view(), name='api_list_followers'),
 ]
