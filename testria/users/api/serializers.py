@@ -1,4 +1,4 @@
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, authenticate
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_str
@@ -118,3 +118,19 @@ class PasswordChangeSerializer(serializers.Serializer):
         user.set_password(self.validated_data['new_password1'])
         user.save()
         return user
+
+class SessionLoginSerializer(serializers.Serializer):
+    username=serializers.CharField(required=True)
+    password=serializers.CharField(write_only=True, required=True, style={'input-type': 'password'})
+
+    def validate(self, data):
+        username=data.get('username')
+        password=data.get('password')
+
+
+        user=authenticate(request=self.context['request'], username=username, password=password)
+        if not user:
+            raise serializers.ValidationError('Unable to authenticate user')
+
+        data['user']=user
+        return data

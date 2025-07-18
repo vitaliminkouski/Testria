@@ -2,9 +2,12 @@ from django.urls import path, include
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView, TokenBlacklistView
 from . import views
 
-app_name='users'
+app_name = 'users'
 
 urlpatterns = [
+    path('login/', views.SessionLoginAPIView.as_view(), name='api_login'),
+    path('logout/', views.SessionLogoutAPIView.as_view(), name='api_logout'),
+
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('token/verify/', TokenVerifyView.as_view(), name='token_verify'),
@@ -19,7 +22,10 @@ urlpatterns = [
 
     path('password-change/', views.PasswordChangeAPIView.as_view(), name='api_password_change'),
 
-    path('resend-verification-email/', views.ResendVerificationEmailAPIView.as_view(), name='api_resend_verification_email'),
+    path('resend-verification-email/', views.ResendVerificationEmailAPIView.as_view(),
+         name='api_resend_verification_email'),
     path('verification/', views.VerifyEmailAPIView.as_view(), name='api_verify'),
+
+    path('csrf-token/', views.GetCSRFTokenAPIView.as_view(), name='api_get_csrf_token'),
 
 ]

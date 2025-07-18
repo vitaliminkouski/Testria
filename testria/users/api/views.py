@@ -1,5 +1,6 @@
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, login, logout
 from django.core.serializers import serialize
+from django.middleware.csrf import get_token
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from rest_framework import generics, status, views
@@ -9,7 +10,7 @@ from rest_framework.response import Response
 
 from users.api.serializers import UserRegisterSerializer, UserSerializer, OtherUserSerializer, \
     PasswordResetRequestSerializer, PasswordResetConfirmSerializer, EmailConfirmationSerializer, \
-    PasswordChangeSerializer
+    PasswordChangeSerializer, SessionLoginSerializer
 from users.tasks import send_password_reset_email_task
 from users.user_services import UserServices
 
@@ -104,3 +105,24 @@ class PasswordChangeAPIView(generics.GenericAPIView):
 
         return Response({"detail": "Password changed successfully"},
                         status=status.HTTP_200_OK)
+
+class SessionLoginAPIView(generics.GenericAPIView):
+    serializer_class = SessionLoginSerializer
+    permission_classes = [AllowAny]
+    def post(self, request, *args, **kwargs):
+        serializer=self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user=serializer.validated_data['user']
+        login(request, user)
+        return Response({"detail": "Logged in successfully."}, status=status.HTTP_200_OK)
+
+class SessionLogoutAPIView(views.APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request, *args, **kwargs):
+        logout(request)
+        return Response({"detail": "Logged out successfully."}, status=status.HTTP_200_OK)
+
+class GetCSRFTokenAPIView(views.APIView):
+    def get(self, request):
+        token=get_token(request)
+        return Response({"csrf_token": token})
