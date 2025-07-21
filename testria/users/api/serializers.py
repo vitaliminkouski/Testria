@@ -1,3 +1,5 @@
+from typing import Any
+
 from django.contrib.auth import get_user_model, authenticate
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.tokens import default_token_generator
@@ -5,6 +7,8 @@ from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from prompt_toolkit.validation import ValidationError
 from rest_framework import serializers
+
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 class UserRegisterSerializer(serializers.ModelSerializer):
     password1=serializers.CharField(write_only=True, required=True, style={'input_type': 'password'})
@@ -134,3 +138,17 @@ class SessionLoginSerializer(serializers.Serializer):
 
         data['user']=user
         return data
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+
+
+    def validate(self, data):
+        username_or_email=data.get('username', None)
+        password=data.get('password', None)
+
+        user=authenticate(request=self.context.get('request'), username=username_or_email,
+                          password=password)
+        if not user:
+            raise serializers.ValidationError("Invalid authentication. Check your username/email and password")
+
+        return super().validate(data)

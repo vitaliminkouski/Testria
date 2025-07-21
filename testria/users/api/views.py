@@ -7,10 +7,11 @@ from rest_framework import generics, status, views
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 from users.api.serializers import UserRegisterSerializer, UserSerializer, OtherUserSerializer, \
     PasswordResetRequestSerializer, PasswordResetConfirmSerializer, EmailConfirmationSerializer, \
-    PasswordChangeSerializer, SessionLoginSerializer
+    PasswordChangeSerializer, SessionLoginSerializer, CustomTokenObtainPairSerializer
 from users.tasks import send_password_reset_email_task
 from users.user_services import UserServices
 from users.custom_user_errors import FollowOnYourselfError, AlreadyFollowedOnUserError
@@ -150,7 +151,13 @@ class ListFollowingAPIView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return self.request.user.following.all()
+        try:
+            username=self.kwargs.get('username')
+        except:
+            return Response({"error": "username not provided"},
+                            status=status.HTTP_400_BAD_REQUEST)
+        target_user=get_object_or_404(get_user_model(), username=username)
+        return target_user.following.all()
 
 
 class ListFollowersAPIView(generics.ListAPIView):
@@ -158,4 +165,16 @@ class ListFollowersAPIView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return self.request.user.followers.all()
+        try:
+            username = self.kwargs.get('username')
+        except:
+            return Response({"error": "username not provided"},
+                            status=status.HTTP_400_BAD_REQUEST)
+        target_user = get_object_or_404(get_user_model(), username=username)
+        return target_user.followers.all()
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    _serializer_class = CustomTokenObtainPairSerializer
+
+    def get_serializer(self, *args, **kwargs):
+        return CustomTokenObtainPairSerializer(data=self.request.data)

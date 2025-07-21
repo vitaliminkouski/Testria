@@ -8,7 +8,7 @@ urlpatterns = [
     path('login/', views.SessionLoginAPIView.as_view(), name='api_login'),
     path('logout/', views.SessionLogoutAPIView.as_view(), name='api_logout'),
 
-    path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('token/', views.CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     path('token/blacklist/', TokenBlacklistView.as_view(), name='token_blacklist'),
@@ -28,6 +28,6 @@ urlpatterns = [
 
     path('follow/<str:username>/', views.FollowAPIView.as_view(), name='api_follow'),
     path('unfollow/<str:username>/', views.UnfollowAPIView.as_view(), name='api_unfollow'),
-    path('following/', views.ListFollowingAPIView.as_view(), name='api_list_following'),
-    path('followers/', views.ListFollowersAPIView.as_view(), name='api_list_followers'),
+    path('<str:username>/following/', views.ListFollowingAPIView.as_view(), name='api_list_following'),
+    path('<str:username>/followers/', views.ListFollowersAPIView.as_view(), name='api_list_followers'),
 ]
