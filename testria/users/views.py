@@ -31,7 +31,7 @@ class LoginUserView(LoginView):
     template_name = 'users/login.html'
 
     def get_success_url(self):
-        return reverse_lazy('users:home')
+        return reverse_lazy('home')
 
 
 def logout_view(request):

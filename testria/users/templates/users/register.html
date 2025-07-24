@@ -1,17 +1,38 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
-</head>
-<body>
-    <h2>Register</h2>
-    <form method="post" enctype="multipart/form-data">
+{% extends 'auth_base.html' %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<div class="auth-form-container"> {
+    <h2 class="form-title">Register</h2>
+    <form method="post" enctype="multipart/form-data" class="auth-form">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Register</button>
+
+        {% for field in form %}
+            <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.help_text %}
+                    <small class="help-text">{{ field.help_text }}</small>
+                {% endif %}
+                {% for error in field.errors %}
+                    <p class="error-message">{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endfor %}
+
+        {% if form.non_field_errors %}
+            <div class="non-field-errors">
+                {% for error in form.non_field_errors %}
+                    <p class="error-message">{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <button type="submit" class="btn btn-primary">Register</button>
     </form>
-    <p>Already have an account? <a href="{% url 'users:login' %}">Login</a></p>
-</body>
-</html>
+    <div class="form-links">
+        <p>Already have an account? <a href="{% url 'users:login' %}" class="link-secondary">Login</a></p>
+    </div>
+</div>
+{% endblock %}
