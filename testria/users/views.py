@@ -21,14 +21,25 @@ class RegisterUserView(CreateView):
     template_name = 'users/register.html'
     success_url = reverse_lazy('users:login')
 
+    def get_context_data(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        context['title']='Registration'
+        context['btn_title']='Sign up'
+        return context
 
-def index(request):
-    return render(request, 'users/home.html')
+
+
 
 
 class LoginUserView(LoginView):
     form_class = LoginUserForm
     template_name = 'users/login.html'
+
+    def get_context_data(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        context['title']='Login'
+        context['btn_title']='Login'
+        return context
 
     def get_success_url(self):
         return reverse_lazy('home')

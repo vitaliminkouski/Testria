@@ -1,34 +1,7 @@
-{% extends 'auth_base.html' %}
+{% extends 'users_forms_base.html' %}
 
 
-{% block content %}
-<div class="auth-form-container">
-    <h2 class="form-title">Login</h2>
-    <form method="post" class="auth-form">
-        {% csrf_token %}
-
-        {% for f in form %}
-            <div class="form-group">
-                {{ f.label_tag }}
-                {{ f }}
-                {% if field.help_text %}
-                    <small class="help-text">{{ f.help_text }}</small>
-                {% endif %}
-                {% for error in f.errors %}
-                    <p class="error-message">{{ error }}</p>
-                {% endfor %}
-            </div>
-        {% endfor %}
-
-        {% if form.non_field_errors %}
-            <div class="non-field-errors">
-                {% for error in form.non_field_errors %}
-                    <p class="error-message">{{ error }}</p>
-                {% endfor %}
-            </div>
-        {% endif %}
-        <button type="submit" class="btn btn-primary">Login</button>
-    </form>
+{% block extracontent %}
     <div class="form-links">
         <p><a href="{% url 'users:password_reset' %}" class="link-secondary">Forgot password?</a></p>
         <p>Don't have an account? <a href="{% url 'users:register' %}" class="link-secondary">Register</a></p>

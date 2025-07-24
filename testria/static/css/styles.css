@@ -259,7 +259,6 @@ ul {
     background-color: #0d1117;
 }
 
-/* Container for the login/registration forms */
 .auth-form-container {
     max-width: 400px;
     width: 90%;
@@ -282,14 +281,19 @@ ul {
 .auth-form .form-group {
     margin-bottom: 20px;
     text-align: left;
+    display: flex;
+    align-items: center;
 }
 
 .auth-form label {
-    display: block;
-    margin-bottom: 8px;
+    display: inline-block;
+    width: 120px;
+    margin-right: 15px;
+    margin-bottom: 0;
     color: #8b949e;
     font-weight: 500;
     font-size: 0.95em;
+    flex-shrink: 0;
 }
 
 .auth-form input[type="text"],
