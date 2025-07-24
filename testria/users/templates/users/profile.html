@@ -1,40 +1,40 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Profile</title>
-    <style>
-        .profile-photo{
-            max-width: 200px;
-            max-height: 200px;
-            height: auto;
-            display: block;
-        }
-    </style>
-</head>
-<body>
-{% if messages %}
-    <ul class="messages">
-        {% for message in messages %}
-            <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <h2 class="form-title">{{ title }}</h2>
+    <form method="post" class="auth-form">
+        {% csrf_token %}
+
+        {% if user.photo %}
+        <p><img src="{{ user.photo.url }}" class="profile-photo"></p>
+        {% else %}
+        <p><img src="{{ default_user_image }}" class="profile-photo"></p>
+        {% endif %}
+        {% for f in form %}
+        <div class="form-group">
+            {{ f.label_tag }}
+            {{ f }}
+            {% if f.help_text %}
+                <small class="help-text">{{ d.help_text }}</small>
+            {% endif %}
+            {% for error in f.errors %}
+                <p class="error-message">{{ error }}</p>
+            {% endfor %}
+        </div>
         {% endfor %}
-    </ul>
-{% endif %}
 
+        {% if form.non_field_errors %}
+        <div class="non-field-errors">
+            {% for error in form.non_field_errors %}
+                <p class="error-message">{{ f.error }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+        <button type="submit" class="btn btn-primary">Save</button>
+    </form>
 
-<h2>Profile</h2>
-
-<form method="post" enctype="multipart/form-data">
-  {% csrf_token %}
-  {% if user.photo %}
-    <p><img src="{{ user.photo.url }}" class="profile-photo"></p>
-  {% else %}
-    <p><img src="{{ default_user_image }}" class="profile-photo"></p>
-  {% endif %}
-  {{ form.as_p }}
-  <button type="submit">Save</button>
-</form>
-<p><a href="{% url 'users:password_change' %}">Change password</a></p>
+    <p><a href="{% url 'users:password_change' %}">Change password</a></p>
 
 {% if not user.is_verified %}
     <p>
@@ -45,6 +45,6 @@
 {% else %}
     <p>Your email address is verified. <span style="color: green;">&#10003;</span></p>
 {% endif %}
+{% endblock %}
 
-</body>
-</html>
+

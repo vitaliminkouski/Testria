@@ -3,15 +3,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <title>{{ title }}</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}{{title}}{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-    {% block extra_head %}{% endblock %} {# For any extra head elements like meta tags or specific CSS #}
 </head>
 <body>
     <header class="main-header">
-        <li><a href="{% url 'users:home' %}">Home</a></li>
+        <li><a href="{% url 'home' %}">Home</a></li>
         {% for m in mainmenu %}
 
             <li><a href="{% url m.url_name %}">{{ m.title }}</a></li>
@@ -25,11 +24,10 @@
 
     </header>
 
-    <div class="main-layout-container"> {# This div wraps sidebar and main content #}
+    <div class="main-layout-container">
         <aside class="sidebar">
             <ul class="sidebar-folders">
                 <li>Here's folders</li>
-                {# Add more sidebar content here #}
             </ul>
         </aside>
 
@@ -43,9 +41,7 @@
                     </ul>
                 {% endif %}
                 {% block content %}
-                    {# Default content or instructions #}
                     <h1>Welcome to Testria!</h1>
-                    <p>This is your main content area.</p>
                 {% endblock %}
             </div>
         </main>
@@ -53,10 +49,9 @@
 
     <footer class="main-footer">
         <div class="container">
-            <p>&copy; {% now "Y" %} Testria. All rights are served</p>
+            <p>{% now "Y" %} Testria. All rights are served</p>
         </div>
     </footer>
 
-    {% block extra_js %}{% endblock %} {# For any additional JavaScript #}
 </body>
 </html>

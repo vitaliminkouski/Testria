@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{title}}</title>
+    <title>{{ title }}</title>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body class="auth-page-body">
@@ -19,7 +19,7 @@
             <div class="form-group">
                 {{ f.label_tag }}
                 {{ f }}
-                {% if field.help_text %}
+                {% if f.help_text %}
                     <small class="help-text">{{ f.help_text }}</small>
                 {% endif %}
                 {% for error in f.errors %}
