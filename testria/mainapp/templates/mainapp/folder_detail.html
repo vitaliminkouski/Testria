@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block sidebar_content %}
+    {% if folder.parent_folder %}
+        <li><a href="{% url 'folder_detail' folder.parent_folder.pk %}" class="btn btn-primary" style="width: 100%">Back</a></li>
+    {% else %}
+        <li><a href="{% url 'home' %}" class="btn btn-primary" style="width: 100%">Back</a></li>
+    {% endif %}
+    {% if subfolders %}
+        {% for subfolder in subfolders %}
+            <li><a href="{% url 'folder_detail' subfolder.pk %}" class="btn btn-folder" >{{ subfolder.name }}</a></li>
+        {% endfor %}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<h2>{{ folder }}</h2>
+  {% if sets %}
+    {% for set in sets %}
+      <ul>
+        <li>{{ set }}</li>
+      </ul>
+    {% endfor %}
+  {% endif %}
+
+
+{% endblock %}

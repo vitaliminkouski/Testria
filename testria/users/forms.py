@@ -31,6 +31,10 @@ class UserProfileForm(forms.ModelForm):
         model=get_user_model()
         fields=['photo', 'username', 'first_name', 'last_name', 'email',  'bio', ]
 
+    widgets={
+        'bio': forms.Textarea()
+    }
+
 class UserPasswordChangeForm(PasswordChangeForm):
     new_password1 = forms.CharField(label='New password', widget=forms.PasswordInput())
     new_password2 = forms.CharField(label='Repeat new password', widget=forms.PasswordInput())

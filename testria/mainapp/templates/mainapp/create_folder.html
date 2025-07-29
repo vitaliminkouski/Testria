@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="form-title">Creating folder</h2>
+<form method="post" class="base-form">
+    {% csrf_token %}
+    {% for f in form %}
+    <div class="form-group">
+        {{ f.label_tag }}
+        {{ f }}
+        {% if f.help_text %}
+            <small class="help-text">{{ f.help_text }}</small>
+        {% endif %}
+
+        {% for error in f.errors %}
+            <p class="error-message">{{error}}</p>
+        {% endfor %}
+    </div>
+    {% endfor %}
+
+    {% if form.non_field_errors %}
+        <div class="non_field_errors">
+            {% for error in form.non_field_errors %}
+                <p class="error-message">{{error}}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+    <button type="submit" class="btn btn-primary">Create</button>
+</form>
+{% endblock %}

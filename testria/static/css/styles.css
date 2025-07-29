@@ -15,6 +15,10 @@ body {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 a {
@@ -60,25 +64,28 @@ ul {
     color: #c9d1d9;
     padding: 20px;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
-    flex-shrink: 0; /
+    flex-shrink: 0;
+
 }
+
+
 
 .sidebar-folders li {
-    padding: 10px 0;
-    border-bottom: 1px solid #30363d;
+    padding: 5px 5px;
+
+    margin-bottom: 1px;
+    text-align: center;
 }
 
-.sidebar-folders li:last-child {
-    border-bottom: none;
-}
+
 
 .main-content {
     flex-grow: 1;
     padding: 30px 20px;
     background-color: #0d1117;
     overflow-y: auto;
-}
 
+}
 .main-footer {
     background-color: #161b22;
     color: #8b949e;
@@ -126,130 +133,6 @@ ul {
 
 
 
-body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
-    line-height: 1.5;
-    color: #c9d1d9;
-    background-color: #0d1117;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
-
-.container {
-    box-sizing: border-box;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-}
-
-a {
-    color: #58a6ff;
-    text-decoration: none;
-    transition: color 0.2s ease;
-}
-
-a:hover {
-    color: #79c0ff;
-}
-
-ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.main-header {
-    background-color: #161b22;
-    padding: 10px 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
-
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-}
-
-.main-header li{ list-style-type: none;}
-
-
-
-.main-layout-container {
-    display: flex;
-    flex: 1;
-}
-
-.sidebar {
-    width: 200px;
-    background-color: #161b22;
-    color: #c9d1d9;
-    padding: 20px;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
-    flex-shrink: 0;
-}
-
-.sidebar-folders li {
-    padding: 10px 0;
-    border-bottom: 1px solid #30363d;
-}
-
-.sidebar-folders li:last-child {
-    border-bottom: none;
-}
-
-.main-content {
-    flex-grow: 1;
-    padding: 30px 20px;
-    background-color: #0d1117;
-    overflow-y: auto;
-}
-
-.main-footer {
-    background-color: #161b22;
-    color: #8b949e;
-    text-align: center;
-    padding: 5px 0;
-    margin-top: auto;
-    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
-}
-
-.messages {
-    list-style: none;
-    padding: 0;
-    margin: 20px 0;
-}
-
-.messages li {
-    padding: 10px 15px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    font-weight: bold;
-}
-
-.messages .success {
-    background-color: #28a745;
-    color: white;
-}
-
-.messages .info {
-    background-color: #17a2b8;
-    color: white;
-}
-
-.messages .warning {
-    background-color: #ffc107;
-    color: #333;
-}
-
-.messages .error {
-    background-color: #f85149;
-    color: white;
-}
-
-
-
 
 .auth-page-body {
     display: flex;
@@ -259,7 +142,7 @@ ul {
     background-color: #0d1117;
 }
 
-.auth-form-container {
+.base-form-container {
     max-width: 400px;
     width: 90%;
     background-color: #161b22;
@@ -269,6 +152,7 @@ ul {
     border: 1px solid #30363d;
     text-align: center;
     box-sizing: border-box;
+
 }
 
 .form-title {
@@ -278,14 +162,16 @@ ul {
     font-weight: 600;
 }
 
-.auth-form .form-group {
+.base-form .form-group {
     margin-bottom: 20px;
     text-align: left;
     display: flex;
     align-items: center;
+    width: 90%;
+    max-width: 1000px
 }
 
-.auth-form label {
+.base-form label {
     display: inline-block;
     width: 120px;
     margin-right: 15px;
@@ -296,10 +182,10 @@ ul {
     flex-shrink: 0;
 }
 
-.auth-form input[type="text"],
-.auth-form input[type="password"],
-.auth-form input[type="email"],
-.auth-form input[type="file"] {
+.base-form input[type="text"],
+.base-form input[type="password"],
+.base-form input[type="email"],
+.base-form input[type="file"] {
     width: 100%;
     padding: 10px 12px;
     border: 1px solid #21262d;
@@ -312,17 +198,17 @@ ul {
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.auth-form input[type="text"]:focus,
-.auth-form input[type="password"]:focus,
-.auth-form input[type="email"]:focus,
-.auth-form input[type="file"]:focus {
-    border-color: #58a6ff; /* --gh-accent-blue */
+.base-form input[type="text"]:focus,
+.base-form input[type="password"]:focus,
+.base-form input[type="email"]:focus,
+.base-form input[type="file"]:focus{
+    border-color: #58a6ff;
     box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.3);
 }
 
-.auth-form input[type="file"] {
-    padding: 8px 12px; /* Adjust padding for file input */
-    line-height: normal; /* Ensure text aligns properly */
+.base-form input[type="file"] {
+    padding: 8px 12px;
+    line-height: normal;
 }
 
 
@@ -337,6 +223,7 @@ ul {
     color: #f85149;
     font-size: 0.85em;
     margin-top: 5px;
+    display: block;
 }
 
 .non-field-errors {
@@ -344,6 +231,7 @@ ul {
 }
 
 .btn {
+    color: white;
     display: inline-block;
     padding: 10px 20px;
     font-size: 1em;
@@ -354,20 +242,31 @@ ul {
     cursor: pointer;
     transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
     border: 1px solid transparent;
-    width: 100%;
+    width: 40%;
     box-sizing: border-box;
+}
+
+.btn-folder {
+    width: 100%;
+}
+
+.btn-folder:hover {
+    background-color: #0d1117;
+    color: white;
+
 }
 
 .btn-primary {
     background-color: #58a6ff;
-    color: white;
     border-color: #58a6ff;
 }
 
 .btn-primary:hover {
+    color: white;
     background-color: #79c0ff;
     border-color: #79c0ff;
 }
+
 
 .form-links {
     margin-top: 25px;
@@ -393,30 +292,19 @@ ul {
     text-decoration: underline;
 }
 
-@media (max-width: 768px) {
-    .header-content {
-        flex-direction: column;
-        align-items: flex-start;
-    }
 
+.profile-photo {
+    border-radius: 50%;
+    object-fit: cover;
+    width: 200px;
+    height: 200px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border: 2px solid #3498db;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    overflow: hidden;
+    display: flex;
 
-
-    .main-layout-container {
-        flex-direction: column;
-    }
-
-    .sidebar {
-        width: 100%;
-        min-width: unset;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-
-    .main-content {
-        padding-top: 20px;
-    }
-
-    .auth-form-container {
-        margin: 20px auto;
-        padding: 20px;
-    }
 }
+

@@ -26,8 +26,17 @@
 
     <div class="main-layout-container">
         <aside class="sidebar">
+
             <ul class="sidebar-folders">
-                <li>Here's folders</li>
+                {% block sidebar_content %}
+                <li><a href="{% url 'create_folder' %}" class="btn btn-primary" style="width: 100%">New folder</a></li>
+
+                    {% if user_folders %}
+                        {% for folder in user_folders %}
+                            <li><a href="{% url 'folder_detail' folder.pk %}" class="btn btn-folder">{{ folder }}</a></li>
+                        {% endfor %}
+                    {% endif %}
+                {% endblock %}
             </ul>
         </aside>
 
