@@ -15,6 +15,7 @@
 
 {% block content %}
 <h2>{{ folder }}</h2>
+<hr style="color: white; width: 100%;">
   {% if sets %}
     {% for set in sets %}
       <ul>
@@ -23,5 +24,7 @@
     {% endfor %}
   {% endif %}
 
-
+<a href="{% url 'create_subfolder' folder.pk %}" class="btn btn-primary">New folder here</a>
+<p></p>
+<a href="{% url 'delete_folder' folder.pk %}" class="btn btn-primary" style="color: red;">Delete folder</a>
 {% endblock %}
