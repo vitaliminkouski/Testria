@@ -256,6 +256,11 @@ ul {
 
 }
 
+.btn-folder.active{
+    background-color: #0d1117;
+    color: white;
+}
+
 .btn-primary {
     background-color: #58a6ff;
     border-color: #58a6ff;
@@ -305,6 +310,26 @@ ul {
     margin-right: auto;
     overflow: hidden;
     display: flex;
-
 }
 
+.set-container {
+    display: flex;
+    width: 100%;
+    background-color: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.set-info {
+    display: flex;
+    align-items: center;
+    align: left;
+}
+
+.set-actions {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+}

@@ -29,11 +29,12 @@
 
             <ul class="sidebar-folders">
                 {% block sidebar_content %}
-                <li><a href="{% url 'create_folder' %}" class="btn btn-primary" style="width: 100%">New folder</a></li>
-
+                <li><a href="{% url 'create_folder' %}" class="btn btn-folder" style="color: blue">New folder</a></li>
+                <li><a href="{% url 'set_list' %}" class="btn btn-folder" style="color: blue">Library</a></li>
+                <hr style="color: white;">
                     {% if user_folders %}
                         {% for folder in user_folders %}
-                            <li><a href="{% url 'folder_detail' folder.pk %}" class="btn btn-folder">{{ folder }}</a></li>
+                            <li><a href="{% url 'folder_detail' folder.pk %}" class="btn btn-folder{% if folder.pk == folder_selected %} active{% endif %}">{{ folder }}</a></li>
                         {% endfor %}
                     {% endif %}
                 {% endblock %}
