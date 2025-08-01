@@ -1,10 +1,12 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Are you sure you want to delete folder {{ folder.name }}?</h2>
+<h2>Are you sure you want to delete folder{{ folder.name }}?</h2>
 <form method="post" class="folder-detail">
     {% csrf_token %}
-    <input type="submit" class="btn btn-primary" style="color: red;" value="Delete">
-    <a href="{% url 'folder_detail' folder.pk %}" class="btn btn-primary">Cancel</a>
+    <div style="display: flexbox">
+        <input type="submit" class="btn btn-delete" value="Delete">
+        <a href="{% url 'folder_detail' folder.pk %}" class="btn btn-edit">Cancel</a>
+    </div>
 </form>
 {% endblock %}

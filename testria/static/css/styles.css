@@ -272,7 +272,28 @@ ul {
     border-color: #79c0ff;
 }
 
+.btn-set{
+    width: 100px;
+}
 
+.btn-start{
+    background-color: #238636;
+    color: white;
+}
+
+.btn-edit {
+    background-color: #388bfd;
+    color: white;
+}
+
+.btn-delete{
+    background-color: #f85149; /* Red */
+    color: white;
+}
+
+.btn-start:hover, .btn-edit:hover, .btn-delete:hover {
+    filter: brightness(1.2);
+}
 .form-links {
     margin-top: 25px;
     font-size: 0.9em;
@@ -332,4 +353,17 @@ ul {
     display: flex;
     align-items: center;
     margin-left: auto;
+    gap: 10px;
+}
+
+.folder-header-container{
+    display: flex;
+    width: 100%;
+    align-items: center;
+}
+
+.folder-actions{
+    display: block;
+    margin-left: auto;
+    gap: 10px;
 }

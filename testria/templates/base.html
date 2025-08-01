@@ -30,7 +30,7 @@
             <ul class="sidebar-folders">
                 {% block sidebar_content %}
                 <li><a href="{% url 'create_folder' %}" class="btn btn-folder" style="color: blue">New folder</a></li>
-                <li><a href="{% url 'set_list' %}" class="btn btn-folder" style="color: blue">Library</a></li>
+                <li><a href="{% url 'set_list' %}" class="btn btn-folder{% if folder_selected == -1 %} active{% endif %}" style="color: blue">Library</a></li>
                 <hr style="color: white;">
                     {% if user_folders %}
                         {% for folder in user_folders %}
