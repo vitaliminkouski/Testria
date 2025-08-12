@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h3>Question</h3>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% for f in question_form %}
+        {{ f.label_tag }}
+        {{ f }}
+        {% for e in f.errors %}
+        <p>{{ e }}</p>
+        {% endfor %}
+
+    {% endfor %}
+    {% for e in question_form.non_field_errors %}
+        <p>{{ e }}</p>
+    {% endfor %}
+
+    {{ answer_formset.management_form }}
+    {% for form in answer_formset %}
+        {% for f in form %}
+        <p>{{ f.label_tag }}</p>
+        <p>{{ f }}</p>
+        {% for e in f.errors %}
+        <p>{{ e }}</p>
+        {% endfor %}
+
+    {% endfor %}
+    {% for e in form.non_field_errors %}
+        <p>{{ e }}</p>
+    {% endfor %}
+    {% endfor %}
+
+    <button type="submit">Create</button>
+</form>
+
+{% endblock %}

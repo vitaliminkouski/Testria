@@ -8,7 +8,10 @@ urlpatterns = [
     path('folders/<int:pk>/', views.FolderDetailView.as_view(), name='folder_detail'),
     path('folders/<int:pk>/edit/', views.EditFolderView.as_view(), name='edit_folder'),
     path('folders/<int:pk>/delete/', views.DeleteFolderView.as_view(), name='delete_folder'),
+
     path('set/create/<int:folder_pk>/', views.CreateSetView.as_view(), name='create_set'),
     path('set/<int:pk>/delete/', views.DeleteSetView.as_view(), name='delete_set'),
-    path('set/', views.SetListView.as_view(), name='set_list')
+    path('set/', views.SetListView.as_view(), name='set_list'),
+    path('set/<int:set_id>/new-test-question/', views.create_test_question_view, name='create_test_question'),
+    path('set/<int:pk>/edit/', views.EditSetView.as_view(), name='edit_set'),
 ]
