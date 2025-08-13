@@ -4,24 +4,28 @@
 
   <h2>{{ set.name }}</h2>
   <form method="post">
-    {% csrf token %}
+    {% csrf_token %}
     {% for f in form %}
-      {{ f.label_tag }}
-      {{ f }}
-      {% for e in f.errors %}
+    <div class="form-group">
+        {{ f.label_tag }}
+        {{ f }}
+        {% for e in f.errors %}
+          <p>{{ e }}</p>
+        {% endfor %}
+      {% endfor %}
+
+      {% for e in form.non_field_errors %}
         <p>{{ e }}</p>
       {% endfor %}
-    {% endfor %}
-
-    {% for e in form.non_field_errors %}
-      <p>{{ e }}</p>
-    {% endfor %}
+      <button type="submit" class="btn btn-primary">Save changes</button>
+    </div>
   </form>
+<hr>
 
   {% for question in questions %}
       <div class="set-container">
           <div class="set-info">
-          <h3>{{ question.name }}</h3>
+          <h3>{{ question.content.text }}</h3>
           </div>
         <div class="set-actions">
           <a href="#" class="btn btn-set btn-edit">Edit</a>

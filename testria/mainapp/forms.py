@@ -20,7 +20,7 @@ class QuestionForm(forms.Form):
         widget=forms.RadioSelect,
         required=True
     )
-    text = forms.CharField(required=False, widget=forms.Textarea)
+    text = forms.CharField(required=True, widget=forms.Textarea)
     image = forms.ImageField(required=False)
 
     def clean(self):
