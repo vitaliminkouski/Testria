@@ -20,20 +20,21 @@
         <hr>
 
         {{ answer_formset.management_form }}
-        <ol>
             {% for form in answer_formset %}
+                <h4>Answer {{ forloop.counter }}</h4>
                 {% for f in form %}
                 <p>{{ f.label_tag }}</p>
                 <p>{{ f }}</p>
+
                 {% for e in f.errors %}
                 <p>{{ e }}</p>
                 {% endfor %}
-    
-                {% endfor %}
-        </ol>
+            {% endfor %}
+
         {% for e in form.non_field_errors %}
             <p>{{ e }}</p>
         {% endfor %}
+        <hr>
         {% endfor %}
 
         <button type="submit" class="btn btn-primary">Create</button>
