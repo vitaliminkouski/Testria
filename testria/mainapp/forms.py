@@ -14,14 +14,16 @@ class CreateSetForm(forms.ModelForm):
         fields=['name', 'type', 'description']
 
 class QuestionForm(forms.Form):
+    text = forms.CharField(required=True, widget=forms.Textarea)
+    image = forms.ImageField(required=False)
+
     correct_answer=forms.ChoiceField(
         label='Correct answer',
         choices=[(i, f"Answer {i}") for i in range(1, 5)],
         widget=forms.RadioSelect,
         required=True
     )
-    text = forms.CharField(required=True, widget=forms.Textarea)
-    image = forms.ImageField(required=False)
+
 
     def clean(self):
         cd=super().clean()
