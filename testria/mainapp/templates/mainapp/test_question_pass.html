@@ -2,29 +2,46 @@
 
 {% block content %}
 
-<h5>{{ question.content.text }}</h5>
-{% if question.content.image %}
-<img src="{{ question.cintent.image.url }}">
-{% endif %}
-<hr>
+<div class="question-container">
+    <h3>{{ question.content.text }}</h3>
+    {% if question.content.image %}
+    <img src="{{ question.content.image.url }}">
+    {% endif %}
+</div>
 <form method="post" enctype="multipart/form-data">
-    {% for answer in answers %}
-        <input type="radio"
-               name="answer"
-               value="{{ answer.id }}"
-               id="answer_{{ answer.id }}"
-               required
-        >
-        <label for="answer_{{ answer.id }}">
-            {% if answer.content.text %}
-                {{ answer.content.text }}
-            {% endif %}
-            {% if answer.content.image %}
-                <img src="{{ answer.content.image.url }}" alt="Answer image" style="max-width: 100%; height: auto;">
-            {% endif %}
-        </label>
-    {% endfor %}
-    <button type="submit" class="btn btn-primary">Submit</button>
+    {% csrf_token %}
+    <div class="answers-container {% if is_feedback %}
+    {% if answer.pk == correct_answer_id %}answer-correct
+    {% elif answer.pk == selected_answer_id %}answer-incorrect{% endif %}
+    {% endif %}">
+        {% for answer in answers %}
+            <div class="answer-option">
+                <input type="radio"
+                       name="answer"
+                       value="{{ answer.id }}"
+                       id="answer_{{ answer.id }}"
+                       {% if is_feedback %}disabled{% endif %}
+                       {% if answer.id == selected_answer_id %}checked{% endif %}
+                       required
+                >
+                <label for="answer_{{ answer.id }}" class="answer-label">
+
+                    {% if answer.content.text %}
+                        {{ answer.content.text }}
+                    {% endif %}
+                    {% if answer.content.image %}
+                    <div class="answer-image">
+                        <img src="{{ answer.content.image.url }}" alt="Answer image" style="max-width: 100%; height: auto;">
+                    </div>
+                    {% endif %}
+                </label>
+            </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+    {% if is_feedback %}
+        <a href="{% url 'take_test_question' session_id %}" class="btn btn-primary">Next question</a>
+    {% endif %}
 </form>
 
 {% endblock %}

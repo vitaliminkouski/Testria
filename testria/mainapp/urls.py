@@ -14,4 +14,7 @@ urlpatterns = [
     path('set/', views.SetListView.as_view(), name='set_list'),
     path('set/<int:set_id>/new-test-question/', views.create_test_question_view, name='create_test_question'),
     path('set/<int:pk>/edit/', views.EditSetView.as_view(), name='edit_set'),
+
+    path('test/<int:set_id>/start/', views.start_test_view, name='start_test'),
+    path('test/<int:session_id>/pass/', views.take_test_question_view, name='take_test_question'),
 ]

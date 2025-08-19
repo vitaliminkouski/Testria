@@ -367,3 +367,71 @@ ul {
     margin-left: auto;
     gap: 10px;
 }
+
+
+
+
+
+.question-container {
+	width: 100%;
+	background-color: #161b22;
+	border: 1px solid #30363d;
+	border-radius: 6px;
+	padding: 16px;
+	margin: 16px 0;
+}
+
+.answers-container {
+	width: 100%;
+	border: 1px solid #30363d;
+	border-radius: 6px;
+	padding: 12px;
+	margin: 16px 0;
+}
+
+.answer-option {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+	padding: 12px;
+	margin-bottom: 12px;
+	border: 1px solid #30363d;
+	border-radius: 6px;
+	background-color: #0d1117;
+}
+
+.answer-option:last-child {
+	margin-bottom: 0;
+}
+
+.answer-option input[type="radio"] {
+	transform: scale(1.4);
+	margin-top: 4px;
+	accent-color: #58a6ff;
+}
+
+.answer-label {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 8px;
+	color: #c9d1d9;
+	flex: 1;
+}
+
+
+
+.answer-image {
+	flex: 1 0 100%;
+	margin-top: 6px;
+}
+
+.answer-image img {
+	max-width: 100%;
+	height: auto;
+	border-radius: 4px;
+	border: 1px solid #30363d;
+}
+
+.answer-correct  { background: #14351d; border-color:#1f6f3b; }
+.answer-incorrect { background: #36181b; border-color:#7a2f36; }

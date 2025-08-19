@@ -271,7 +271,7 @@ def start_test_view(request, set_id):
     ).first()
 
     if active_session:
-        pass #go to this session
+        return redirect('take_test_question', session_id=active_session.pk)
 
     session = TestSession.objects.create(
         user=request.user,
@@ -287,26 +287,57 @@ def take_test_question_view(request, session_id):
     if session.is_completed:
         return redirect('test_results', session_id=session.pk)
 
-    questions=session.test_set.questions.all()
-
     try:
+        questions = session.test_set.questions.all()
         question=questions[session.next_question_num]
         answers=question.answers.all()
 
-
-        if session.next_question_num>questions.count:
-            session.is_completed=True
-            return redirect('test_results', session_id=session.pk)
-        data={
-            "title": "Test",
-            "question": questions[session.next_question_num],
-            "answers": answers
-        }
-        session.next_question_num+=1
-        return render(request, "mainapp/test_question_pass.html", data)
-
     except:
         messages.error(request, "Question not found")
-        session.next_question_num+=1
-        return redirect('take_test_question', session_id=session.id)
+        session.next_question_num += 1
+        return redirect('take_test_question', session_id=session.pk)
+
+    if request.method=="POST":
+        answer_id=request.POST.get("answer")
+        if not answer_id:
+            messages.error(request, "Answer is not provided")
+            session.next_question_num += 1
+            return redirect('take_test_question', session_id=session.pk)
+
+        correct_answer=answers.get(is_correct=True)
+        if not correct_answer:
+            messages.error(request, "Correct is not found")
+            session.next_question_num += 1
+            return redirect('take_test_question', session_id=session.pk)
+
+        if correct_answer.pk==answer_id:
+            is_answered_correct=True
+        else:
+            is_answered_correct=False
+
+        data={
+            "title": "Test",
+            "is_feedback": True,
+            "is_answered_correct": is_answered_correct,
+            "correct_answer_id": correct_answer.pk,
+            "selected_answer_id": answer_id,
+            "question": question,
+            "answers": answers,
+            "session_id": session.pk
+        }
+
+        return render(request, "mainapp/test_question_pass.html", data)
+
+    if session.next_question_num>questions.count():
+        session.is_completed=True
+        return redirect('test_results', session_id=session.pk)
+    data={
+        "title": "Test",
+        "question": question,
+        "answers": answers
+    }
+    session.next_question_num+=1
+    return render(request, "mainapp/test_question_pass.html", data)
+
+
 
