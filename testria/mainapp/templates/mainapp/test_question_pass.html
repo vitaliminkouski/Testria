@@ -10,12 +10,12 @@
 </div>
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    <div class="answers-container {% if is_feedback %}
+    <div class="answers-container">
+        {% for answer in answers %}
+            <div class="answer-option {% if is_feedback %}
     {% if answer.pk == correct_answer_id %}answer-correct
     {% elif answer.pk == selected_answer_id %}answer-incorrect{% endif %}
     {% endif %}">
-        {% for answer in answers %}
-            <div class="answer-option">
                 <input type="radio"
                        name="answer"
                        value="{{ answer.id }}"

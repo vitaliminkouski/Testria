@@ -55,8 +55,9 @@ class TestSession(models.Model):
     next_question_num=models.IntegerField(default=0)
 
 class UserTestAnswer(models.Model):
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    test_set = models.ForeignKey(Set, on_delete=models.CASCADE)
+    session=models.ForeignKey(TestSession, on_delete=models.CASCADE, related_name='user_answers')
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
     selected_answer=models.ForeignKey(Answer, on_delete=models.CASCADE)
+    is_correct=models.BooleanField(default=False)
 
 

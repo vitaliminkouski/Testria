@@ -17,4 +17,5 @@ urlpatterns = [
 
     path('test/<int:set_id>/start/', views.start_test_view, name='start_test'),
     path('test/<int:session_id>/pass/', views.take_test_question_view, name='take_test_question'),
+    path('test/test/<int:session_id>/results/', views.test_results_view, name='test_results'),
 ]

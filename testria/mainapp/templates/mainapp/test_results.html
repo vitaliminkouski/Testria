@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h3>{{ test_name }}</h3>
+<h3>Results</h3>
+
+{% for ans_item in answers_data %}
+
+<div class="question-container">
+    <h3>{{ ans_item.question.content.text }}</h3>
+    {% if ans_item.question.content.image %}
+    <img src="{{ ans_item.question.content.image.url }}">
+    {% endif %}
+</div>
+
+{% for answer in ans_item.answers %}
+    <div class="answer-option
+        {% if answer.pk == ans_item.correct_answer_id %}answer-correct
+        {% elif answer.pk == ans_item.selected_answer_id %}answer-incorrect{% endif %}
+        ">
+
+        <div class="answer-label">
+            {% if answer.content.text %}
+                {{ answer.content.text }}
+            {% endif %}
+            {% if answer.content.image %}
+            <div class="answer-image">
+                <img src="{{ answer.content.image.url }}" style="max-width: 100%; height: auto;">
+            </div>
+            {% endif %}
+        </div>
+    </div>
+{% endfor %}
+{% endfor %}
+
+{% endblock %}

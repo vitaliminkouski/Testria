@@ -8,7 +8,7 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView, DetailView, DeleteView, ListView, UpdateView
 
 from mainapp.forms import CreateFolderForm, CreateSetForm, TestAnswerForm, QuestionForm
-from mainapp.models import Folder, Set, Question, Answer, Block, TestSession
+from mainapp.models import Folder, Set, Question, Answer, Block, TestSession, UserTestAnswer
 
 
 def index(request):
@@ -239,8 +239,7 @@ def create_test_question_view(request, set_id):
 
         return render(request, "mainapp/create_test_question.html", data)
 
-        messages.error(request, "Error during question creating")
-        return redirect('home')
+
 
 
 class EditSetView(LoginRequiredMixin, UpdateView):
@@ -289,6 +288,12 @@ def take_test_question_view(request, session_id):
 
     try:
         questions = session.test_set.questions.all()
+
+        if session.next_question_num >= questions.count():
+            session.is_completed = True
+            session.save()
+            return redirect('test_results', session_id=session.pk)
+
         question=questions[session.next_question_num]
         answers=question.answers.all()
 
@@ -311,33 +316,72 @@ def take_test_question_view(request, session_id):
             return redirect('take_test_question', session_id=session.pk)
 
         if correct_answer.pk==answer_id:
-            is_answered_correct=True
+            is_correct=True
         else:
-            is_answered_correct=False
+            is_correct=False
+
+
+
+        UserTestAnswer.objects.create(
+            session=session,
+            question=question,
+            selected_answer_id=answer_id,
+            is_correct=is_correct
+        )
 
         data={
             "title": "Test",
             "is_feedback": True,
-            "is_answered_correct": is_answered_correct,
-            "correct_answer_id": correct_answer.pk,
-            "selected_answer_id": answer_id,
+            "correct_answer_id": int(correct_answer.pk),
+            "selected_answer_id": int(answer_id),
             "question": question,
             "answers": answers,
             "session_id": session.pk
         }
 
+        session.next_question_num += 1
+        session.save()
+
         return render(request, "mainapp/test_question_pass.html", data)
 
-    if session.next_question_num>questions.count():
-        session.is_completed=True
-        return redirect('test_results', session_id=session.pk)
+
     data={
         "title": "Test",
         "question": question,
         "answers": answers
     }
-    session.next_question_num+=1
+
     return render(request, "mainapp/test_question_pass.html", data)
 
+@login_required()
+def test_results_view(request, session_id):
+    session=get_object_or_404(TestSession, pk=session_id)
+
+    if not session.is_completed:
+        return redirect('take_test_question', session_id=session.pk)
+
+    user_answers=UserTestAnswer.objects.filter(session=session)
+
+    answers_data=[]
+    for user_answer in user_answers:
+        answer_dict = {}
+        question=user_answer.question
+        answers=question.answers.all()
+
+        answer_dict['question']=question
+        answer_dict['answers']=answers
+        answer_dict['selected_answer_id']=user_answer.selected_answer.pk
+        answer_dict['correct_answer_id']=answers.filter(is_correct=True).first().pk
+
+        answers_data.append(answer_dict)
+
+
+    data={
+        "title": "Results",
+        "answers_data": answers_data,
+        "test_name": session.test_set.name
+    }
+    session.delete()
+    return render(request, "mainapp/test_results.html", data)
 
 
