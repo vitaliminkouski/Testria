@@ -12,7 +12,8 @@ urlpatterns = [
     path('set/create/<int:folder_pk>/', views.CreateSetView.as_view(), name='create_set'),
     path('set/<int:pk>/delete/', views.DeleteSetView.as_view(), name='delete_set'),
     path('set/', views.SetListView.as_view(), name='set_list'),
-    path('set/<int:set_id>/new-test-question/', views.create_test_question_view, name='create_test_question'),
+    path('set/<int:set_id>/question/new/', views.create_test_question_view, name='create_test_question'),
+    path('set/<int:set_id>/question/<int:q_id>/delete/', views.delete_question_view, name='delete_question'),
     path('set/<int:pk>/edit/', views.EditSetView.as_view(), name='edit_set'),
 
     path('test/<int:set_id>/start/', views.start_test_view, name='start_test'),

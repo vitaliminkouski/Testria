@@ -382,7 +382,7 @@ ul {
 }
 
 .answers-container {
-	width: 100%;
+	width: 1000px;
 	border: 1px solid #30363d;
 	border-radius: 6px;
 	padding: 12px;
@@ -390,7 +390,7 @@ ul {
 }
 
 .answer-option {
-	display: flex;
+    display: flex;
 	align-items: flex-start;
 	gap: 10px;
 	padding: 12px;

@@ -212,7 +212,7 @@ def create_test_question_view(request, set_id):
                                     is_correct=False
                                 )
 
-                return redirect('home')
+                return redirect('edit_set', pk=set_id)
 
             except:
                 messages.error(request, "Error during creating question")
@@ -383,5 +383,15 @@ def test_results_view(request, session_id):
     }
     session.delete()
     return render(request, "mainapp/test_results.html", data)
+
+@login_required()
+def delete_question_view(request, set_id, q_id):
+    question=get_object_or_404(Question, pk=q_id, set_id=set_id)
+    try:
+        question.delete()
+    except:
+        messages.error(request, "Can't delete question")
+
+    return redirect('edit_set', pk=set_id)
 
 

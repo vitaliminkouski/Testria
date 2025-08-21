@@ -29,7 +29,7 @@
           </div>
         <div class="set-actions">
           <a href="#" class="btn btn-set btn-edit">Edit</a>
-          <a href="#" class="btn btn-set btn-delete">Delete</a>
+          <a href="{% url 'delete_question' set.pk question.pk %}" class="btn btn-set btn-delete">Delete</a>
         </div>
       </div>
   {% endfor %}
